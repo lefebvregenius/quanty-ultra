@@ -29,38 +29,52 @@ export default function Dashboard() {
 
   const today = new Date().toDateString();
 
-  const visitsToday = stats.filter(
-    (s) =>
-      new Date(s.date).toDateString() === today &&
-      s.type === "visit"
-  ).length;
+ // 🔐 Sécurité : toujours un tableau
+const safeStats = Array.isArray(stats) ? stats : [];
 
-  const totalVisits = stats.filter((s) => s.type === "visit").length;
+const today = new Date().toDateString();
 
-  const liveUsers = stats.filter(
-    (s) =>
-      s.type === "visit" &&
-      Date.now() - new Date(s.date).getTime() < 30000
-  ).length;
+// 📊 VISITES AUJOURD’HUI
+const visitsToday = safeStats.filter(
+  (s) =>
+    new Date(s.date).toDateString() === today &&
+    s.type === "visit"
+).length;
 
-  const avgTime =
-    stats
-      .filter((s) => s.type === "leave")
-      .reduce((a, b) => a + b.duration, 0) /
-    (stats.filter((s) => s.type === "leave").length || 1);
+// 📊 TOTAL VISITES
+const totalVisits = safeStats.filter(
+  (s) => s.type === "visit"
+).length;
 
-  const madagascarUsers = stats.filter(
-    (s) => s.country === "MG"
-  ).length;
+// 🔴 UTILISATEURS EN DIRECT (30 sec)
+const liveUsers = safeStats.filter(
+  (s) =>
+    s.type === "visit" &&
+    Date.now() - new Date(s.date).getTime() < 30000
+).length;
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  };
+// ⏱ TEMPS MOYEN
+const leaves = safeStats.filter((s) => s.type === "leave");
 
-  const graphData = stats
-    .filter((s) => s.type === "visit")
-    .slice(-25);
+const avgTime =
+  leaves.reduce((a, b) => a + (b.duration || 0), 0) /
+  (leaves.length || 1);
+
+// 🇲🇬 UTILISATEURS MADAGASCAR
+const madagascarUsers = safeStats.filter(
+  (s) => s.country === "MG"
+).length;
+
+// 🔐 LOGOUT
+const logout = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/";
+};
+
+// 📈 GRAPH DATA
+const graphData = safeStats
+  .filter((s) => s.type === "visit")
+  .slice(-25);
 
   return (
     <div style={styles.wrapper}>
