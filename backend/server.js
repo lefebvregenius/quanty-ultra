@@ -10,7 +10,7 @@ const app = express();
 //////////////////////////////////////////////////
 
 app.use(cors({
-  origin: "*", // (plus tard tu peux limiter à ton domaine Vercel)
+  origin: ["https://quanty-ultra.vercel.app"]
 }));
 
 app.use(express.json());
@@ -52,8 +52,11 @@ mongoose.connection.on("disconnected", () => {
 
 const StatSchema = new mongoose.Schema({
   type: { type: String, default: "visit" },
+  url: String,
   duration: { type: Number, default: 0 },
   country: { type: String, default: "MG" },
+  userAgent: String,
+  timestamp: String,
   date: { type: Date, default: Date.now }
 });
 
@@ -95,18 +98,21 @@ app.post("/api/login", (req, res) => {
 //////////////////////////////////////////////////
 // 📊 COLLECT DATA
 //////////////////////////////////////////////////
-
-app.post("/api/collect", async (req, res) => {
+console.log("📊 DATA REÇUE :", req.body);
+app.post("/api/track", async (req, res) => {
   try {
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ error: "DB not connected" });
     }
 
-    const stat = new Stat({
-      type: req.body.type,
-      duration: req.body.duration,
-      country: req.body.country
-    });
+   const stat = new Stat({
+  type: req.body.type,
+  url: req.body.url,
+  duration: req.body.duration,
+  country: req.body.country || "MG",
+  userAgent: req.body.userAgent,
+  timestamp: req.body.timestamp
+});
 
     await stat.save();
 
