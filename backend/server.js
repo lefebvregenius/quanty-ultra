@@ -6,34 +6,33 @@ const mongoose = require("mongoose");
 const app = express();
 
 //////////////////////////////////////////////////
-// LOG ENV (DEBUG SAFE)
-//////////////////////////////////////////////////
-
-console.log("🚀 ENV CHECK");
-console.log("MONGO_URI =", process.env.MONGO_URI ? "OK" : "MISSING");
-
-//////////////////////////////////////////////////
-// MIDDLEWARE
+// 🔐 SECURITY / MIDDLEWARE
 //////////////////////////////////////////////////
 
 app.use(cors({
-  origin: "*"
+  origin: "*", // (plus tard tu peux limiter à ton domaine Vercel)
 }));
 
 app.use(express.json());
 
 //////////////////////////////////////////////////
-// 🔥 MONGODB CONNECTION (RAILWAY SAFE)
+// 🚀 HEALTH CHECK (IMPORTANT RENDER)
+//////////////////////////////////////////////////
+
+app.get("/", (req, res) => {
+  res.json({
+    status: "Quanty API Online 🚀",
+    time: new Date()
+  });
+});
+
+//////////////////////////////////////////////////
+// 🔥 MONGODB CONNECTION SAFE
 //////////////////////////////////////////////////
 
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("✅ MongoDB connecté");
-  })
-  .catch(err => {
-    console.log("❌ MongoDB ERROR:");
-    console.log(err.message);
-  });
+  .then(() => console.log("✅ MongoDB connecté"))
+  .catch(err => console.log("❌ MongoDB ERROR:", err.message));
 
 mongoose.connection.on("connected", () => {
   console.log("🟢 DB CONNECTED");
@@ -52,24 +51,24 @@ mongoose.connection.on("disconnected", () => {
 //////////////////////////////////////////////////
 
 const StatSchema = new mongoose.Schema({
-  type: String,
-  duration: Number,
-  country: String,
+  type: { type: String, default: "visit" },
+  duration: { type: Number, default: 0 },
+  country: { type: String, default: "MG" },
   date: { type: Date, default: Date.now }
 });
 
 const Stat = mongoose.model("Stat", StatSchema);
 
 //////////////////////////////////////////////////
-// 🔐 AUTH TOKEN
+// 🔐 SIMPLE AUTH (PRODUCTION READY BASE)
 //////////////////////////////////////////////////
 
-const TOKEN = "quanty_ultra_token";
+const TOKEN = process.env.API_TOKEN || "quanty_ultra_token";
 
 const checkAuth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || authHeader !== "Bearer " + TOKEN) {
+  if (!authHeader || authHeader !== `Bearer ${TOKEN}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
@@ -90,7 +89,7 @@ app.post("/api/login", (req, res) => {
     });
   }
 
-  return res.status(401).json({ success: false });
+  return res.status(401).json({ success: false, message: "Invalid credentials" });
 });
 
 //////////////////////////////////////////////////
@@ -104,9 +103,9 @@ app.post("/api/collect", async (req, res) => {
     }
 
     const stat = new Stat({
-      type: req.body.type || "visit",
-      duration: req.body.duration || 0,
-      country: req.body.country || "MG"
+      type: req.body.type,
+      duration: req.body.duration,
+      country: req.body.country
     });
 
     await stat.save();
@@ -115,12 +114,12 @@ app.post("/api/collect", async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "DB error" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
 //////////////////////////////////////////////////
-// 📊 GET STATS
+// 📊 STATS (PROTECTED)
 //////////////////////////////////////////////////
 
 app.get("/api/stats", checkAuth, async (req, res) => {
@@ -137,23 +136,12 @@ app.get("/api/stats", checkAuth, async (req, res) => {
 
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: "DB error" });
+    res.status(500).json({ error: "Server error" });
   }
 });
 
 //////////////////////////////////////////////////
-// HEALTH CHECK (RAILWAY IMPORTANT)
-//////////////////////////////////////////////////
-
-app.get("/", (req, res) => {
-  res.json({
-    status: "Quanty API Online",
-    time: new Date()
-  });
-});
-
-//////////////////////////////////////////////////
-// 🚀 START SERVER (RAILWAY READY)
+// 🚀 START SERVER (RENDER SAFE)
 //////////////////////////////////////////////////
 
 const PORT = process.env.PORT || 5000;

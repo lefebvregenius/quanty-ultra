@@ -12,7 +12,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/stats", {
+        const res = await fetch("https://quanty-ultra.onrender.com/api/stats", {
   headers: {
     Authorization: "Bearer " + localStorage.getItem("token")
   }

@@ -51,7 +51,7 @@ export default function Login({ onLogin }) {
 
   const login = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
+      const res = await axios.post("https://quanty-ultra.onrender.com/api/login", {
         username,
         password,
       });
