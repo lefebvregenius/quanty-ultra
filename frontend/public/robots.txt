@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://quanty-ultra.vercel.app/sitemap.xml
