@@ -1,14 +1,75 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
+    <!-- BASIC META -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
+
+    <!-- TITLE SEO -->
+    <title>Quanty Ultra - Monitoring & Analytics en temps réel</title>
+
+    <!-- DESCRIPTION SEO -->
+    <meta name="description" content="Quanty Ultra est une plateforme avancée de monitoring et analytics en temps réel pour sites web. Analyse visiteurs, performance et système en direct." />
+
+    <!-- KEYWORDS -->
+    <meta name="keywords" content="Quanty Ultra, monitoring web, analytics temps réel, dashboard, Gralwebs, site analytics, performance tracking" />
+
+    <!-- AUTHOR -->
+    <meta name="author" content="Gralwebs Solution" />
+
+    <!-- FAVICON -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- OPEN GRAPH (FACEBOOK / LINKEDIN / WHATSAPP) -->
+    <meta property="og:title" content="Quanty Ultra - Monitoring intelligent" />
+    <meta property="og:description" content="Plateforme de monitoring et analytics en temps réel." />
+    <meta property="og:url" content="https://quanty-ultra.vercel.app" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/preview.png" />
+
+    <!-- TWITTER CARD -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Quanty Ultra" />
+    <meta name="twitter:description" content="Monitoring & analytics en temps réel" />
+    <meta name="twitter:image" content="/preview.png" />
+
+    <!-- ROBOTS (INDEX GOOGLE) -->
+    <meta name="robots" content="index, follow" />
+
+    <!-- THEME COLOR -->
+    <meta name="theme-color" content="#000000" />
+
+    <!-- STRUCTURED DATA (SEO AVANCÉ GOOGLE) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Quanty Ultra",
+      "url": "https://quanty-ultra.vercel.app",
+      "applicationCategory": "AnalyticsApplication",
+      "operatingSystem": "Web",
+      "description": "Plateforme de monitoring et analytics en temps réel pour sites web.",
+      "author": {
+        "@type": "Organization",
+        "name": "Gralwebs Solution"
+      }
+    }
+    </script>
+
+    <!-- SITEMAP LINK (OPTIONNEL) -->
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
   </head>
+
   <body>
+    <noscript>Vous devez activer JavaScript pour utiliser Quanty Ultra.</noscript>
+
+    <!-- ROOT REACT -->
     <div id="root"></div>
+
+    <!-- MAIN APP -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
