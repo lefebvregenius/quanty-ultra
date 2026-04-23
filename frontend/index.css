@@ -1,0 +1,15 @@
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes grow {
+  from {
+    height: 0;
+  }
+}
+button:active {
+  transform: scale(0.95);
+}
