@@ -12,13 +12,36 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch("https://quanty-ultra.onrender.com/api/stats", {
+       const res = await fetch("https://quanty-ultra.onrender.com/api/stats", {
   headers: {
     Authorization: "Bearer " + localStorage.getItem("token")
   }
 });
-        const data = await res.json();
-        setStats(data);
+
+if (!res.ok) {
+  console.log("AUTH ERROR", res.status);
+
+  // option bonus 🔥
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  }
+
+  return;
+}
+
+if (!res.ok) {
+  console.log("AUTH ERROR", res.status);
+
+  if (res.status === 401) {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  }
+  return;
+}
+
+const data = await res.json();
+setStats(data);
       } catch {}
     };
 
@@ -45,11 +68,11 @@ const totalVisits = safeStats.filter(
   (s) => s.type === "visit"
 ).length;
 
-// 🔴 UTILISATEURS EN DIRECT (30 sec)
+// 🔴 UTILISATEURS EN DIRECT (15 sec)
 const liveUsers = safeStats.filter(
   (s) =>
-    s.type === "visit" &&
-    Date.now() - new Date(s.date).getTime() < 30000
+    s.type === "heartbeat" &&
+    Date.now() - new Date(s.date).getTime() < 15000
 ).length;
 
 // ⏱ TEMPS MOYEN
@@ -69,7 +92,32 @@ const logout = () => {
   localStorage.removeItem("token");
   window.location.href = "/";
 };
+const perf = safeStats.filter((s) => s.type === "performance");
 
+const lcpData = perf.filter((s) => s.metric === "LCP");
+const clsData = perf.filter((s) => s.metric === "CLS");
+const fidData = perf.filter((s) => s.metric === "FID");
+
+const avgLCP =
+  lcpData.reduce((a, b) => a + (b.value || 0), 0) /
+  (lcpData.length || 1);
+
+const avgCLS =
+  clsData.reduce((a, b) => a + (b.value || 0), 0) /
+  (clsData.length || 1);
+
+const avgFID =
+  fidData.reduce((a, b) => a + (b.value || 0), 0) /
+  (fidData.length || 1);
+  const network = safeStats.filter((s) => s.type === "network");
+
+const avgTTFB =
+  network.reduce((a, b) => a + (b.ttfb || 0), 0) /
+  (network.length || 1);
+
+const avgLoad =
+  network.reduce((a, b) => a + (b.load || 0), 0) /
+  (network.length || 1);
 // 📈 GRAPH DATA
 const graphData = safeStats
   .filter((s) => s.type === "visit")
@@ -90,7 +138,7 @@ const graphData = safeStats
       <div style={styles.grid}>
         <Tile large>
           <img src="/profile2.png" style={styles.profile} />
-          <h2 style={styles.name}>RANDRIAMANAANTENA L.N Andrianina</h2>
+          <h2 style={styles.name}>RANDRIAMANANTENA L.N.J Andrianina</h2>
         </Tile>
 
         <Tile title="TIME">{time.toLocaleTimeString()}</Tile>
@@ -112,6 +160,15 @@ const graphData = safeStats
         <Tile title="LIVE TRAFFIC">
           <Graph data={graphData} />
         </Tile>
+        <Tile title="PERFORMANCE ⚡">
+  <p>LCP: {Math.floor(avgLCP)} ms</p>
+  <p>CLS: {avgCLS.toFixed(3)}</p>
+  <p>FID: {Math.floor(avgFID)} ms</p>
+</Tile>
+<Tile title="NETWORK 🌐">
+  <p>TTFB: {Math.floor(avgTTFB)} ms</p>
+  <p>Load: {Math.floor(avgLoad)} ms</p>
+</Tile>
 
         {/* 🧮 AJOUT */}
         <Tile title="CALCULATOR">

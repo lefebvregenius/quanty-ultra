@@ -52,11 +52,25 @@ mongoose.connection.on("disconnected", () => {
 
 const StatSchema = new mongoose.Schema({
   type: { type: String, default: "visit" },
+
+  // 🔥 GENERAL
   url: String,
-  duration: { type: Number, default: 0 },
-  country: { type: String, default: "MG" },
   userAgent: String,
-  timestamp: String,
+  country: { type: String, default: "MG" },
+
+  // ⏱ TIME
+  duration: { type: Number, default: 0 },
+
+  // ⚡ PERFORMANCE
+  metric: String,
+  value: Number,
+
+  // 🌐 NETWORK
+  ttfb: Number,
+  load: Number,
+
+  // 🕓 TIME
+  timestamp: Number,
   date: { type: Date, default: Date.now }
 });
 
@@ -106,13 +120,24 @@ app.post("/api/track", async (req, res) => {
       return res.status(503).json({ error: "DB not connected" });
     }
 
-   const stat = new Stat({
+const stat = new Stat({
   type: req.body.type,
+
   url: req.body.url,
-  duration: req.body.duration,
-  country: req.body.country || "MG",
   userAgent: req.body.userAgent,
-  timestamp: req.body.timestamp
+  country: req.body.country || "MG",
+
+  duration: req.body.duration || 0,
+
+  // ⚡ PERFORMANCE
+  metric: req.body.metric,
+  value: req.body.value,
+
+  // 🌐 NETWORK
+  ttfb: req.body.ttfb,
+  load: req.body.load,
+
+  timestamp: req.body.timestamp || Date.now()
 });
 
     await stat.save();
@@ -137,7 +162,7 @@ app.get("/api/stats", checkAuth, async (req, res) => {
 
     const data = await Stat.find()
       .sort({ date: -1 })
-      .limit(100);
+      .limit(500);
 
     res.json(data);
 
