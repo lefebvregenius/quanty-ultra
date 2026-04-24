@@ -98,9 +98,10 @@ app.post("/api/login", (req, res) => {
 //////////////////////////////////////////////////
 // 📊 COLLECT DATA
 //////////////////////////////////////////////////
-console.log("📊 DATA REÇUE :", req.body);
+
 app.post("/api/track", async (req, res) => {
   try {
+    console.log("📊 DATA REÇUE :", req.body);
     if (mongoose.connection.readyState !== 1) {
       return res.status(503).json({ error: "DB not connected" });
     }

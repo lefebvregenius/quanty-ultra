@@ -27,7 +27,6 @@ export default function Dashboard() {
     return () => clearInterval(i);
   }, []);
 
-  const today = new Date().toDateString();
 
  // 🔐 Sécurité : toujours un tableau
 const safeStats = Array.isArray(stats) ? stats : [];
@@ -91,7 +90,7 @@ const graphData = safeStats
       <div style={styles.grid}>
         <Tile large>
           <img src="/profile2.png" style={styles.profile} />
-          <h2 style={styles.name}>ADMIN</h2>
+          <h2 style={styles.name}>RANDRIAMANAANTENA L.N Andrianina</h2>
         </Tile>
 
         <Tile title="TIME">{time.toLocaleTimeString()}</Tile>
