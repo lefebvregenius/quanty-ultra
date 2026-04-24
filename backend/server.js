@@ -8,9 +8,8 @@ const app = express();
 //////////////////////////////////////////////////
 // 🔐 SECURITY / MIDDLEWARE
 //////////////////////////////////////////////////
-
 app.use(cors({
-  origin: ["https://quanty-ultra.vercel.app"]
+  origin: "*"
 }));
 
 app.use(express.json());
